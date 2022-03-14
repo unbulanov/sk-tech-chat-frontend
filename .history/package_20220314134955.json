@@ -2,7 +2,7 @@
   "name": "react-scratch",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "index.ts",
   "scripts": {
     "start": "webpack-dev-server --open",
     "build": "webpack"

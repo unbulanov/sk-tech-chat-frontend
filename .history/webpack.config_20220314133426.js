@@ -1,11 +1,11 @@
 const path = require("path");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 module.exports = {
-  entry: "./src/index.js",
+  entry: "./src/index.tsx",
   mode: "development",
   output: {
-    filename: "./main.js",
-    chunkFilename: "[name].bundle.js"
+    filename: "./main.ts",
+    chunkFilename: "[name].bundle.ts"
   },
   devServer: {
     contentBase: path.join(__dirname, "dist"),
@@ -39,7 +39,7 @@ module.exports = {
       {
         test: /\.css$/,
         use: [
-          "style-loader",
+          "typings-for-css-modules",
           {
             loader: "css-loader",
             options: {

@@ -5,15 +5,23 @@ import {
     MAIN_MESSAGES_LIST_FAILED,
 
     MAIN_SEND_MESSAGE,
+    TAction,
 } from '../actions/mainActions';
+import { MessagesList } from '../types';
 
-const initialState = {
+export type TState = {
+    username: string,
+    messagesList: MessagesList | null,
+    messengerError: Error | null,
+}
+
+const initialState: TState = {
     username: 'Anonim',
     messagesList: null,
     messengerError: null,
 }
 
-const main = (state = initialState, action) => {
+const main = (state = initialState, action: TAction) => {
     switch (action.type) {
         case MAIN_MESSAGES_LIST_FETCH: {
             const newState = Object.assign({}, state);

@@ -1,8 +1,8 @@
-import { all, takeEvery, put, delay, call } from 'redux-saga/effects';
+import { all, takeEvery, put, delay, call } from 'typed-redux-saga';
 import { mainActions } from '../actions';
 import { MainApi } from '../api'
 
-function* mainMessagesList() {
+export function* mainMessagesList(): Generator<any, void, any> {
     try {
         const data = yield call(
             MainApi.getMessagesList,
@@ -16,11 +16,11 @@ function* mainMessagesList() {
     }
 }
 
-export function* watchMainMessagesList() {
+export function* watchMainMessagesList(): Generator<any, void, any> {
     yield takeEvery(mainActions.MAIN_MESSAGES_LIST_FETCH, mainMessagesList);
 }
 
-export default function* rootSaga() {
+export default function* rootSaga(): Generator<any, void, any> {
     yield all([
         watchMainMessagesList(),
     ]);

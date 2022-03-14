@@ -1,23 +1,34 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { Dispatch } from 'redux';
 import { mainActions } from '../../actions';
+import { AppState } from '../../reducers';
 import { 
     getMainUsername,
     getMainMessagesList,
 } from '../../selectors/mainSelector';
+import { MessagesList } from '../../types';
 import styles from './styles.css';
 
-const mapStateToProps = (state) => ({
+export interface Props {
+    username: string
+    messages: MessagesList
+
+    getMessagesList: Function
+    sendMessage: Function
+}
+
+const mapStateToProps = (state: AppState) => ({
     messages: getMainMessagesList(state),
     username: getMainUsername(state),
 })
 
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch: Dispatch) => ({
     getMessagesList: () => dispatch(mainActions.mainMessagesListFetch()),
-    sendMessage: (messageText) => dispatch(mainActions.mainSendMessage(messageText)),
+    sendMessage: (messageText: string) => dispatch(mainActions.mainSendMessage(messageText)),
 });
 
-const Home = (props) => {
+const Home = (props: Props) => {
     const {
         username,
         messages,
@@ -65,7 +76,7 @@ const Home = (props) => {
                 <div className={styles.usernameContainer}>
                     <label
                         className={styles.usernameLabel}
-                        for="username"
+                        htmlFor="username"
                     >
                         Ваше имя:
                     </label>

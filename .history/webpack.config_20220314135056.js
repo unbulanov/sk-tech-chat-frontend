@@ -5,7 +5,7 @@ module.exports = {
   mode: "development",
   output: {
     filename: "./main.js",
-    chunkFilename: "[name].bundle.js"
+    chunkFilename: "[name].bundle.ts"
   },
   devServer: {
     contentBase: path.join(__dirname, "dist"),
