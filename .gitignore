@@ -2,3 +2,4 @@
 yarn.lock
 *.log
 .history
+package-lock.json
