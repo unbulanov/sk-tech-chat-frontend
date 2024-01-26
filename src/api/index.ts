@@ -1,9 +1,7 @@
-import MainApi from './MainApi';
+import MainApi from "./MainApi";
 
-export {
-    MainApi,
-};
+export { MainApi };
 
 export default {
-    MainApi,
+  MainApi,
 };

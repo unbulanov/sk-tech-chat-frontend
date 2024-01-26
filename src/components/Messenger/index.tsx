@@ -1,119 +1,254 @@
-import React from 'react';
-import { connect } from 'react-redux';
-import { Dispatch } from 'redux';
-import { mainActions } from '../../actions';
-import { AppState } from '../../reducers';
-import { 
-    getMainUsername,
-    getMainMessagesList,
-} from '../../selectors/mainSelector';
-import { MessagesList } from '../../types';
-import styles from './styles.css';
+import React from "react";
+
+import SendOutlinedIcon from "@mui/icons-material/SendOutlined";
+import {
+  Box,
+  Button,
+  Container,
+  Input,
+  Paper,
+  Typography,
+} from "@mui/material";
+
+import { useChat } from "hooks/useChat";
+import { connect } from "react-redux";
+import { Dispatch } from "redux";
+import { mainActions } from "../../actions";
+import { AppState } from "../../reducers";
+import {
+  getMainMessagesList,
+  getMainUsername,
+} from "../../selectors/mainSelector";
+import { MessagesList } from "../../types";
+
 
 export interface Props {
-    username: string
-    messages: MessagesList
+  username: string;
+  messages: MessagesList;
 
-    getMessagesList: Function
-    sendMessage: Function
+  getMessagesList: Function;
+  sendMessage: Function;
 }
 
 const mapStateToProps = (state: AppState) => ({
-    messages: getMainMessagesList(state),
-    username: getMainUsername(state),
-})
+  messages: getMainMessagesList(state),
+  username: getMainUsername(state),
+});
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
-    getMessagesList: () => dispatch(mainActions.mainMessagesListFetch()),
-    sendMessage: (messageText: string) => dispatch(mainActions.mainSendMessage(messageText)),
+  getMessagesList: () => dispatch(mainActions.mainMessagesListFetch()),
+  sendMessage: (messageText: string) =>
+    dispatch(mainActions.mainSendMessage(messageText)),
 });
 
 const Home = (props: Props) => {
-    const {
-        username,
-        messages,
-        getMessagesList,
-        sendMessage,
-    } = props;
-    const [messageText, setmessageText] = React.useState('');
+  const { username, messages, getMessagesList, sendMessage } = props;
 
-    React.useEffect(() => {
-        getMessagesList();
-    }, []);
-    
-    return (
-        <div className={styles.root}>
-            <ul className={styles.messagesList}>
-                {
-                    messages === null
-                        ? <li className={styles.noMessage}>Загрузка...</li>
-                        : null
-                }
-                {
-                    messages !== null && !messages.length
-                        ? <li className={styles.noMessage}>Нет сообщений</li>
-                        : null
-                }
-                {
-                    messages !== null && messages.length
-                        ? messages.map(message =>
-                            <li className={styles.messageItem}>
-                                <div className={styles.messageText}>
-                                    <div className={styles.messageSender}>
-                                        {message.sender}
-                                    </div>
-                                    {message.text}
-                                </div>
-                                <span className={styles.messageTime}>
-                                    {message.time}
-                                </span>
-                            </li>
-                        )                        
-                        : null
-                }
-            </ul>
-            <form className={styles.newMessagePanel}>
-                <div className={styles.usernameContainer}>
-                    <label
-                        className={styles.usernameLabel}
-                        htmlFor="username"
-                    >
-                        Ваше имя:
-                    </label>
-                    <input
-                        name="username"
-                        value={username}
-                        className={styles.usernameValue}
-                        size={10}
-                    />
-                </div>
-                <input
-                    className={styles.messageInput}
-                    value={messageText}
-                    onChange={(event) => {
-                        setmessageText(event.target.value);
-                    }}
-                    placeholder="Введите сообщение"
-                    autoFocus
-                />
-                <button
-                    onClick={(event) => {
-                        event.preventDefault();
-                        if (messageText) {
-                            sendMessage(messageText);
-                            setmessageText('');
-                        }
-                    }}
-                    className={styles.messageSendButton}
+  const [messageText, setmessageText] = React.useState<any | null>("");
+
+  const [currentUsername, setCurrentUsername] = React.useState("");
+
+  const lastMessageRef = React.useRef<HTMLDivElement>(null);
+
+  const { chats, log, chatActions } = useChat();
+
+  React.useEffect(() => {
+    lastMessageRef.current?.scrollIntoView();
+  }, [messageText]);
+
+  // const messageListener = (message: string) => {
+  //   setmessageText([...messageText, message])
+  // }
+
+  React.useEffect(() => {
+    getMessagesList();
+  }, []);
+
+  return (
+    <Container
+      maxWidth={false}
+      sx={{
+        WebkitFontSmoothing: 'antialiased',
+        MozOsxFontSmoothing: 'grayscale',
+        m: "'auto'",
+        minWidth: "320px",
+        maxWidth: "600px",
+        maxHeigh: "100vh",
+        height: "100vh",
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
+      <Paper
+        sx={{
+          p: "14px",
+          m: 0,
+          width: "100%",
+          height: "100%",
+          overflow: "auto",
+          boxSizing: "border-box",
+          background: "#f7fafc",
+        }}
+      >
+        {messages === null ? (
+          <Typography
+            component={'div'}
+            sx={{
+              color: "gray",
+              width: "100%",
+              listStyleType: "none",
+              textAlign: "center",
+              lineHeight: "100px",
+            }}
+          >
+            Загрузка...
+          </Typography>
+        ) : null}
+        {messages !== null && !messages.length ? (
+          <Typography
+            component={'div'}
+            sx={{
+              color: "gray",
+              width: "100%",
+              listStyleType: "none",
+              textAlign: "center",
+              lineHeight: "100px",
+            }}
+          >
+            Нет сообщений
+          </Typography>
+        ) : null}
+        {messages !== null && messages.length
+          ? messages.map((message, index) => (
+              <Box
+                key={index}
+                sx={{
+                  m: "10px 0",
+                  listStyleType: "none",
+                  position: "relative",
+                }}
+              >
+                <Typography
+                  component={'div'}
+                  sx={{
+                    background: "#e1e8f0",
+                    p: "8px",
+                    pr: "32px",
+                    borderRadius: "4px",
+                    wordBreak: "break-all",
+                  }}
                 >
-                    <img
-                        className={styles.sendImage}
-                        src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAABmJLR0QA/wD/AP+gvaeTAAADe0lEQVR4nO3bTahVVRQH8J8v6z0ry6KIPknySTUoSKIIIwJHhTRIaVDpLGyUM6EEkz5oFjWLRtnMaiQ0eSF9YkWkFGQEFYXSJ0WKPS2ft8G6l32M+/x47+x9jp77hzu55+y9/nvdvdde/7X3ZYQRRhhhBDvxNTbi4oa5NIIv0Ot/DuBlTDbKqDDukxww+BzDFFZjQXPUyuFtMfD38Sr+lpzxFTbggsbYFcCN+AczWCFiwRP4QXLEX3gJ1zfEMTteFAP9QJr2Y2IZTEmOmMEOrGqAY1Yswa9ikGuGPL8Nr2BacsZuPIZFhThmxwYxsB9x/izvXIFN2Cc54he8gGsLcMyKc7BHDOqpk7x7HtZil+SII9iOuzJyzI57xWAO4bpTbLMC2/Cv5IzPsA7nZuCYHW+KQWw7zXZX4mn8Ljnip/53l9VJMDeWimB3DCvn0H5c/PpfSo44LBx6S00cs+M5aSqPzaOflSIuHJWc8aGIHwvnyTErLsR+QfjRGvq7QewUf0qO+FbsKJfW0H8WrJPW8UU19blY5A57JUccFDnGzTXZqA0L8LEg+WzNfY+JbHKHiDWtFWF3CmKHsSyTjeVCZxySZsU3Qo+0QoS9Lki9kdlOa0XY1WKd9pQRQa0UYZv7RPaIlLkUWiPCFuH7PoEtmChpXGSZW/Gz40XY1v6zIlhbMf6HqB+WzuzGsR6fV7gcEXHq9hIEHsanFeM9fCKm5OISBCq4W+iWapb5ER5SQITdJDK73yrGp0Xau0rZfbxRETYulsaUlND0xFnDJlyem8D/uDQqwpYJr1f38UGRZLWyu0ejImwhHhD7dpXAu7kND8GkCNYHKjzeY34Sd67oNWBzGLLxmNTBJTBbENyrfBCcUDAItmkbvErBbbDTidCaiqHOpcITOi6GBnJ4tw7K4WpB5J4C9lpXEBmUxLZnttPKktigKDqdkURri6LVsvgzNfc9rCw+o2Vl8fWC2D5xUlQHzpiDkerR2CM19Heio7FLaui/djwvSO4yv+l4Rh6OVo/H75hD+6KiJAfeEqRfO812RUVJLgyuyBwUAzoVnDVXZKqXpJ48ybtn5SWpx8VAvjO72DnRNblrCnDMhiVScePBIc9bIUpyYnBVdmflu9aJklwYXJY+ilu1VJTkRKevy9/v+PpeK0VJTnT+LzPv6PifpkYYYYQROon/AMqXkYAs2UHIAAAAAElFTkSuQmCC"
-                    />
-                </button>
-            </form>
-        </div>
-    )
-}
+                  <Typography
+                    component={'div'}
+                    sx={{
+                      fontSize: "12px",
+                      fontWeight: 600,
+                      color: "#4974ad",
+                    }}
+                  >
+                    {message.sender}
+                  </Typography>
+                  {message.text}
+                </Typography>
 
+                <Typography
+                  component={'div'}
+                  sx={{
+                    position: "absolute",
+                    right: "4px",
+                    bottom: "2px",
+                    fontSize: "12px",
+                    color: "#7b98ba",
+                  }}
+                >
+                  {message.time}
+                </Typography>
+              </Box>
+            ))
+          : null}
+        <Box ref={lastMessageRef}></Box>
+      </Paper>
+
+      <Box
+        sx={{
+          width: "100%",
+          display: "flex",
+          background: "#bfcdde",
+          minHeight: "50px",
+        }}
+        component="form"
+      >
+        <Box
+          sx={{
+            p: "0 8px",
+            borderRight: "1px solid gray",
+          }}
+        >
+          <Typography
+            component={'div'}
+            sx={{
+              fontSize: "12px",
+              color: "gray",
+            }}
+          >
+            Ваше имя:
+          </Typography>
+          <Input
+            name="username"
+            value={currentUsername}
+            sx={{
+              border: "none",
+              background: "none",
+              width: "fit-content",
+            }}
+            size="small"
+            disableUnderline
+            onChange={(event) => {
+              setCurrentUsername(event.target.value);
+            }}
+          />
+        </Box>
+        <Input
+          sx={{
+            width: "100%",
+            border: "none",
+            background: "none",
+            p: "10px",
+            ":focus-visible": {
+              outline: "none",
+            },
+          }}
+          value={messageText}
+          onChange={(event) => {
+            setmessageText(event.target.value);
+          }}
+          placeholder="Введите сообщение"
+          disableUnderline
+          autoFocus
+        />
+        <Button
+          onClick={(event) => {
+            event.preventDefault();
+            if (messageText) {
+              sendMessage(messageText);
+              setmessageText("");
+            }
+          }}
+          sx={{
+            background: "none",
+            border: "none",
+          }}
+        >
+          <SendOutlinedIcon
+            sx={{
+              width: "20px",
+              height: "20px",
+              color: "gray",
+            }}
+          />
+        </Button>
+      </Box>
+    </Container>
+  );
+};
 export default connect(mapStateToProps, mapDispatchToProps)(Home);

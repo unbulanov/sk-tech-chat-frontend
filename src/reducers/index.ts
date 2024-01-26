@@ -1,12 +1,12 @@
-import { combineReducers } from 'redux';
-import main, { TState } from './main';
+import { combineReducers } from "redux";
+import main, { TState } from "./main";
 
 export type AppState = {
-    main: TState,
+  main: TState;
 };
 
 const reducers = combineReducers({
-    main,
-})
+  main,
+});
 
 export default reducers;

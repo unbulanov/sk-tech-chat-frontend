@@ -1,5 +1,3 @@
-import mainActions from './mainActions';
+import mainActions from "./mainActions";
 
-export {
-    mainActions,
-};
+export { mainActions };
